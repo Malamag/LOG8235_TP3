@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+/TP3/Binaries
+/TP3/Config
+/TP3/Content/Collections
+/TP3/Content/Mannequin
+/TP3/Content/Maps
+/TP3/Content/StarterContent
+/TP3/Content/TopDown
+/TP3/DerivedDataCache
+/TP3/Intermediate
+/TP3/Saved
+/TP3/*.sln
