@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SDTChaseGroupManager.h"
+#include "SDTAIController.h"
 #include "SoftDesignTraining.h"
 #include "DrawDebugHelpers.h"
 #include <cmath>
@@ -23,6 +24,7 @@ void ASDTChaseGroupManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	DrawChasePoints();
 	DisplayGroupMember();
+	AssignChasePointsToAiActors();
 }
 
 void ASDTChaseGroupManager::ClearChasePoints()
@@ -55,7 +57,7 @@ void ASDTChaseGroupManager::RegisterAIAgent(ASDTBaseAIController* aiAgent)
 		m_registeredAgents.Add(aiAgent);		
 		ClearChasePoints();
 		UpdateChasePoints();
-		AssignChasePointsToAiActors();
+		//AssignChasePointsToAiActors();
 	}
 }
 
@@ -65,7 +67,7 @@ void ASDTChaseGroupManager::UnregisterAIAgent(ASDTBaseAIController* aiAgent)
 		m_registeredAgents.Remove(aiAgent);
 		ClearChasePoints();
 		UpdateChasePoints();
-		AssignChasePointsToAiActors();
+		//AssignChasePointsToAiActors();
 	}
 	
 }
@@ -73,6 +75,8 @@ void ASDTChaseGroupManager::UnregisterAIAgent(ASDTBaseAIController* aiAgent)
 void ASDTChaseGroupManager::AssignChasePointsToAiActors()
 {
 	for (int i = 0; i < m_registeredAgents.Num(); i++) {
+		//m_registeredAgents[i]->StopMovement();
+		m_registeredAgents[i]->MoveToLocation(m_target->GetActorLocation() + m_chasePoints[i], 0.5f);
 		//m_registeredAgents[i]->SetChasePoint(m_chasePoints[i]);
 	}
 }

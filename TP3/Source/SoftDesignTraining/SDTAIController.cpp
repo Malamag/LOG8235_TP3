@@ -487,7 +487,7 @@ void ASDTAIController::OnPossess(APawn* pawn)
             UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
             UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
             UpdateBehaviorTreeIsAgentLanding(pawn, false);
-            UpdateBehaviorTreeCanExecute(pawn, false);
+            UpdateBehaviorTreeCanExecute(pawn, true);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);

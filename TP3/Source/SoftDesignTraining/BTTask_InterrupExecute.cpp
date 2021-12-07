@@ -12,7 +12,7 @@ EBTNodeResult::Type UBTTask_InterrupExecute::ExecuteTask(UBehaviorTreeComponent&
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
-        OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Bool>(aiController->GetCanExecuteBBKeyID(), false);
+        //OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Bool>(aiController->GetCanExecuteBBKeyID(), false);
         return EBTNodeResult::Succeeded;
     }
 
