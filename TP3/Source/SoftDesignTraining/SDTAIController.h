@@ -60,7 +60,6 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AI)
         bool Landing = false;
-
     
 protected:
 
@@ -85,6 +84,9 @@ public:
     void AIStateInterrupted();
     void JoinChaseGroup();
     void LeaveChaseGroup();
+    FVector GetChaseLocation();
+    void ResetState();
+    void SetBlackboardDefaultState(APawn* pawn);
     void UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute);
     void UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool atJumpSegment);
     void UpdateBehaviorTreeIsAgentLanding(APawn* pawn, bool isAgentLanding);

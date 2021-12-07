@@ -36,6 +36,14 @@ void ASDTAIController::Tick(float deltaTime)
 {
     Super::Tick(deltaTime);
 
+    USDTPathFollowingComponent* pathfollowing = Cast<USDTPathFollowingComponent>(GetPathFollowingComponent());
+    
+    APawn* pawn = GetPawn();
+
+    UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, AtJumpSegment);
+    UpdateBehaviorTreeIsAgentInTheAir(pawn, InAir);
+    UpdateBehaviorTreeIsAgentLanding(pawn, Landing);
+        
     DrawDebugString(GetWorld(), FVector(0.f, 0.f, 5.f), detectTimeString + FString("\n---\n") + fleeAndCollectTimeString, GetPawn(), FColor::Green, 0.0f, false);
 }
 
@@ -461,6 +469,42 @@ void ASDTAIController::StopBehaviorTree(APawn* pawn)
     }
 }
 
+void ASDTAIController::ResetState() {
+
+    StopMovement();
+    SetBlackboardDefaultState(GetPawn());
+}
+
+void ASDTAIController::SetBlackboardDefaultState(APawn* pawn) {
+    //StopBehaviorTree(pawn);
+    //StartBehaviorTree(pawn);
+    USDTPathFollowingComponent* pathfollowing = Cast<USDTPathFollowingComponent>(GetPathFollowingComponent());
+    //pathfollowing->AbortMove("Respawn", pathfollowing->GetCurrentRequestId());
+    pathfollowing->m_JumpProgressRatio = 1.f;
+    //pathfollowing->m_JumpProgressRatio = 0.f;
+    //pawn->Reset();
+   
+    
+    AtJumpSegment = false;
+    InAir = false;
+    Landing = false;
+    
+    UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
+    UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
+    UpdateBehaviorTreeIsAgentLanding(pawn, false);
+    UpdateBehaviorTreeCanExecute(pawn, true);
+    m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
+    m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
+    m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);
+    m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetReachedDestinationBBKeyID(), true);
+    m_blackboardComponent->SetValue<UBlackboardKeyType_Object>(m_blackboardComponent->GetKeyID("SelfActor"), pawn);
+    
+}
+
+FVector ASDTAIController::GetChaseLocation() {
+    return m_chaseGroupManager->GetChaseLocation(m_groupNumber);
+}
+
 void ASDTAIController::OnPossess(APawn* pawn)
 {
     Super::OnPossess(pawn);
@@ -484,15 +528,7 @@ void ASDTAIController::OnPossess(APawn* pawn)
             m_reachedDestinationBBKeyID = m_blackboardComponent->GetKeyID("ReachedDestination");
             m_canExecuteBBKeyID = m_blackboardComponent->GetKeyID("CanExecute");
             //Set this agent in the BT
-            UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
-            UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
-            UpdateBehaviorTreeIsAgentLanding(pawn, false);
-            UpdateBehaviorTreeCanExecute(pawn, true);
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetReachedDestinationBBKeyID(), true);
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Object>(m_blackboardComponent->GetKeyID("SelfActor"), pawn);
+            SetBlackboardDefaultState(pawn);
         }
     }
 }

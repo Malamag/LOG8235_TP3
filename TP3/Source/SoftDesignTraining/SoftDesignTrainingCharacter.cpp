@@ -52,5 +52,6 @@ void ASoftDesignTrainingCharacter::Die()
     if (ASDTAIController* controller = Cast<ASDTAIController>(GetController()))
     {
         controller->AIStateInterrupted();
+        controller->SetBlackboardDefaultState(controller->GetPawn());
     }
 }

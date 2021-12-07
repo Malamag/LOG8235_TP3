@@ -54,11 +54,11 @@ EBTNodeResult::Type UBTTask_GetBestFleeLocation::ExecuteTask(UBehaviorTreeCompon
                 }
             }
 
-            if (bestFleeLocation) {               
+            if (bestFleeLocation) {
                 return EBTNodeResult::Succeeded;
             }
         }
-        
+
     }
     return EBTNodeResult::Failed;
 }

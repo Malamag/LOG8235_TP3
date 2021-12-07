@@ -21,8 +21,8 @@ public:
     void UnregisterAIAgent(ASDTBaseAIController* aiAgent);
     void DrawChasePoints();
     void DisplayGroupMember();
+    FVector GetChaseLocation(int groupNumber);
 
-    //TargetLKPInfo GetLKPFromGroup(const FString& targetLabel, bool& targetFound);
 protected:
     virtual void BeginPlay() override;
 

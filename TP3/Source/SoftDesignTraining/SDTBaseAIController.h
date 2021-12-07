@@ -18,6 +18,7 @@ public:
 
     ASDTBaseAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
     virtual void Tick(float deltaTime) override;
+    int m_groupNumber;
 	
 protected:
     virtual void RotationUpdate(float deltaTime) {};

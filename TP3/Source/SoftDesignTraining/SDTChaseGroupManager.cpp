@@ -24,7 +24,8 @@ void ASDTChaseGroupManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	DrawChasePoints();
 	DisplayGroupMember();
-	AssignChasePointsToAiActors();
+	//UpdateChasePoints();
+	//AssignChasePointsToAiActors();
 }
 
 void ASDTChaseGroupManager::ClearChasePoints()
@@ -36,7 +37,8 @@ void ASDTChaseGroupManager::UpdateChasePoints()
 {
 	FVector chasePoint = m_target->GetActorLocation();
 	if (m_registeredAgents.Num() == 1) {
-		m_chasePoints.Add(FVector(0, 0, 0));
+		m_chasePoints.Add(chasePoint);
+		m_registeredAgents[0]->m_groupNumber = 0;
 	}
 	else {
 		for (int i = 0; i < m_registeredAgents.Num(); i++) {
@@ -47,6 +49,7 @@ void ASDTChaseGroupManager::UpdateChasePoints()
 
 			//chasePoint += offset;
 			m_chasePoints.Add(offset);
+			m_registeredAgents[i]->m_groupNumber = i;
 		}
 	}
 }
@@ -81,6 +84,11 @@ void ASDTChaseGroupManager::AssignChasePointsToAiActors()
 	}
 }
 
+FVector ASDTChaseGroupManager::GetChaseLocation(int groupNumber) {
+
+	return m_target->GetActorLocation() + m_chasePoints[groupNumber];
+}
+
 void ASDTChaseGroupManager::DrawChasePoints()
 {
 	for (int i = 0; i < m_chasePoints.Num(); i++)
@@ -97,29 +105,3 @@ void ASDTChaseGroupManager::DisplayGroupMember()
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Green, FString::FString("Membre du groupe de poursuite :"));
 }
-
-/*TargetLKPInfo AiAgentGroupManager::GetLKPFromGroup(const FString& targetLabel, bool& targetfound)
-{
-    int agentCount = m_registeredAgents.Num();
-    TargetLKPInfo outLKPInfo = TargetLKPInfo();
-    targetfound = false;
-
-    for (int i = 0; i < agentCount; ++i)
-    {
-        AAIBase* aiAgent = m_registeredAgents[i];
-        if (aiAgent)
-        {
-            const TargetLKPInfo& targetLKPInfo = aiAgent->GetCurrentTargetLKPInfo();
-            if (targetLKPInfo.GetTargetLabel() == targetLabel)
-            {
-                if (targetLKPInfo.GetLastUpdatedTimeStamp() > outLKPInfo.GetLastUpdatedTimeStamp())
-                {
-                    targetfound = targetLKPInfo.GetLKPState() != TargetLKPInfo::ELKPState::LKPState_Invalid;
-                    outLKPInfo = targetLKPInfo;
-                }
-            }
-        }
-    }
-
-    return outLKPInfo;
-}*/
