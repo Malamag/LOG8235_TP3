@@ -2,17 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_AsLoSTimerNotExpired.generated.h"
+#include "BTTask_LeaveChaseGroup.generated.h"
 
 /**
  *
  */
 UCLASS()
-class SOFTDESIGNTRAINING_API UBTTask_AsLoSTimerNotExpired: public UBTTask_BlackboardBase
+class SOFTDESIGNTRAINING_API UBTTask_LeaveChaseGroup : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };
-
 
 

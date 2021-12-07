@@ -70,7 +70,7 @@ void USDTPathFollowingComponent::FollowPathSegment(float DeltaTime)
                 MovementComp->RequestDirectMove((CurrentTarget - controller->GetPawn()->GetActorLocation()), bNotFollowingLastSegment);
             }
         }
-        
+
         return;
     }
 
@@ -134,7 +134,7 @@ void USDTPathFollowingComponent::SetMoveSegment(int32 SegmentStartIndex)
                 {
                     controller->GetPawn()->bUseControllerRotationYaw = true;
                     controller->AtJumpSegment = true;
-                    controller->UpdateBehaviorTreeAtJumpSegment(controller->GetPawn(), controller->AtJumpSegment);
+                    controller->UpdateBehaviorTreeIsAgentAtJumpSegment(controller->GetPawn(), true);
                     MovementComp->StopMovementKeepPathing();
 
                     charMoveComp->bOrientRotationToMovement = false;
@@ -156,9 +156,9 @@ void USDTPathFollowingComponent::SetMoveSegment(int32 SegmentStartIndex)
                 {
                     controller->GetPawn()->bUseControllerRotationYaw = false;
                     controller->AtJumpSegment = false;
-                    controller->UpdateBehaviorTreeAtJumpSegment(controller->GetPawn(), controller->AtJumpSegment);
+                    controller->UpdateBehaviorTreeIsAgentAtJumpSegment(controller->GetPawn(), false);
                     controller->Landing = false;
-
+                    controller->UpdateBehaviorTreeIsAgentLanding(controller->GetPawn(), false);
                     charMoveComp->bOrientRotationToMovement = true;
                     charMoveComp->SetMovementMode(MOVE_Walking);
                 }

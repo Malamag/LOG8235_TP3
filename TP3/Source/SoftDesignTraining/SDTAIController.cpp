@@ -78,7 +78,7 @@ void ASDTAIController::MoveToRandomCollectible()
 
 void ASDTAIController::MoveToPlayer()
 {
-    ACharacter * playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     if (!playerCharacter)
         return;
 
@@ -88,7 +88,7 @@ void ASDTAIController::MoveToPlayer()
 
 void ASDTAIController::PlayerInteractionLoSUpdate()
 {
-    ACharacter * playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     if (!playerCharacter)
         return;
 
@@ -126,7 +126,7 @@ void ASDTAIController::PlayerInteractionLoSUpdate()
             DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Lost LoS", GetPawn(), FColor::Red, 5.f, false);
         }
     }
-    
+
 }
 
 void ASDTAIController::OnPlayerInteractionNoLosDone()
@@ -349,7 +349,7 @@ void ASDTAIController::GetHightestPriorityDetectionHit(const TArray<FHitResult>&
                 outDetectionHit = hit;
                 return;
             }
-            else if(component->GetCollisionObjectType() == COLLISION_COLLECTIBLE)
+            else if (component->GetCollisionObjectType() == COLLISION_COLLECTIBLE)
             {
                 outDetectionHit = hit;
             }
@@ -368,13 +368,35 @@ void ASDTAIController::UpdatePlayerInteractionBehavior(const FHitResult& detecti
     }
 }
 
-void ASDTAIController::UpdateBehaviorTreeAtJumpSegment(APawn* pawn, bool atJumpSegment)
+void ASDTAIController::UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool atJumpSegment)
 {
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
     {
         if (aiBaseCharacter->GetBehaviorTree())
         {
-            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(m_blackboardComponent->GetKeyID("AtJumpSegment"), atJumpSegment);
+            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsAgentAtJumpSegmentBBKeyID(), atJumpSegment);
+        }
+    }
+}
+
+void ASDTAIController::UpdateBehaviorTreeIsAgentInTheAir(APawn* pawn, bool isAgentInTheAir)
+{
+    if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
+    {
+        if (aiBaseCharacter->GetBehaviorTree())
+        {
+            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsAgentInTheAirBBKeyID(), isAgentInTheAir);
+        }
+    }
+}
+
+void ASDTAIController::UpdateBehaviorTreeIsAgentLanding(APawn* pawn, bool isAgentLanding)
+{
+    if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
+    {
+        if (aiBaseCharacter->GetBehaviorTree())
+        {
+            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsAgentLandingBBKeyID(), isAgentLanding);
         }
     }
 }
@@ -412,22 +434,24 @@ void ASDTAIController::OnPossess(APawn* pawn)
             m_blackboardComponent->InitializeBlackboard(*aiBaseCharacter->GetBehaviorTree()->BlackboardAsset);
 
             m_agentBehaviorBBKeyID = m_blackboardComponent->GetKeyID("AgentBehavior");
-            m_collisionChannelBBKeyID = m_blackboardComponent->GetKeyID("CollisionChannel");
-            m_collisionImpactPointBBKeyID = m_blackboardComponent->GetKeyID("CollisionImpactPoint");
-            m_collisionImpactTraceStartBBKeyID = m_blackboardComponent->GetKeyID("CollisionImpactTraceStart");
-            m_collisionActorBBKeyID = m_blackboardComponent->GetKeyID("CollisionActor");
             m_targetPositionBBKeyID = m_blackboardComponent->GetKeyID("TargetPosition");
             m_isPlayerPowerUpBBKeyID = m_blackboardComponent->GetKeyID("IsPlayerPowerUp");
-            m_newBehaviorBBKeyID = m_blackboardComponent->GetKeyID("NewBehavior");  
+            m_newBehaviorBBKeyID = m_blackboardComponent->GetKeyID("NewBehavior");
             m_losTimerStartTimeBBKeyID = m_blackboardComponent->GetKeyID("LoSTimerStartTime");
             m_isLoSTimerActiveBBKeyID = m_blackboardComponent->GetKeyID("IsLoSTimerActive");
             m_wasPlayerInLoSBBKeyID = m_blackboardComponent->GetKeyID("WasPlayerInLoS");
-            m_isAgentIdleBBKeyID = m_blackboardComponent->GetKeyID("IsAgentIdle");
+            m_isAgentInTheAirBBKeyID = m_blackboardComponent->GetKeyID("IsAgentInTheAir");
+            m_isAgentLandingBBKeyID = m_blackboardComponent->GetKeyID("IsAgentLanding");
+            m_isAgentAtJumpSegmentBBKeyID = m_blackboardComponent->GetKeyID("IsAgentAtJumpSegment");
+            m_reachedDestinationBBKeyID = m_blackboardComponent->GetKeyID("ReachedDestination");
             //Set this agent in the BT
-            UpdateBehaviorTreeAtJumpSegment(pawn, false);
+            UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
+            UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
+            UpdateBehaviorTreeIsAgentLanding(pawn, false);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);
+            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetReachedDestinationBBKeyID(), true);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Object>(m_blackboardComponent->GetKeyID("SelfActor"), pawn);
         }
     }

@@ -15,9 +15,10 @@ EBTNodeResult::Type UBTTask_MoveToPlayer::ExecuteTask(UBehaviorTreeComponent& Ow
         ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
         if (playerCharacter) {
-            aiController->StopMovement();
+            UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
+            //aiController->StopMovement();
             aiController->MoveToActor(playerCharacter, 0.5f, false, true, true, NULL, false);
-            OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Bool>(aiController->GetIsAgentIdleBBKeyID(), false);
+            blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetReachedDestinationBBKeyID(), false);
             return EBTNodeResult::Succeeded;
         }
     }

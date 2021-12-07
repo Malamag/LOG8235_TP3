@@ -12,10 +12,11 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
-        aiController->StopMovement();
+        UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
+        //aiController->StopMovement();
         FVector targetLocation = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(aiController->GetTargetPositionBBKeyID());
         aiController->MoveToLocation(targetLocation, 0.5f, false, true, false, NULL, false);
-        OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Bool>(aiController->GetIsAgentIdleBBKeyID(), false);
+        blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetReachedDestinationBBKeyID(), false);
         return EBTNodeResult::Succeeded;
     }
 

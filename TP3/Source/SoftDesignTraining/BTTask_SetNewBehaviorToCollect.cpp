@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_SetNewBehaviorToCollect::ExecuteTask(UBehaviorTreeCo
         OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID(), ASDTAIController::PlayerInteractionBehavior_Collect);
         return EBTNodeResult::Succeeded;
     }
-    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 900.f), "Fail", Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(OwnerComp.GetBlackboardComponent()->GetKeyID("SelfActor"))), FColor::Blue, 5.f, false);
+
     return EBTNodeResult::Failed;
 }
 

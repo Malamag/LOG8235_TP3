@@ -1,18 +1,21 @@
 
-#include "BTTask_HasLoS.h"
+#include "BTService_UpdateLoS.h"
 #include "SoftDesignTraining.h"
 #include "SDTAIController.h"
 #include "SoftDesignTrainingCharacter.h"
-#include "DrawDebugHelpers.h"
 #include "SDTUtils.h"
-
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
+#include "DrawDebugHelpers.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
-EBTNodeResult::Type UBTTask_HasLoS::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+UBTService_UpdateLoS::UBTService_UpdateLoS()
 {
+    bCreateNodeInstance = true;
+}
 
+void UBTService_UpdateLoS::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
         ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
@@ -48,8 +51,6 @@ EBTNodeResult::Type UBTTask_HasLoS::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
                     DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Got LoS", selfPawn, FColor::Red, 5.f, false);
                 }
-
-                return EBTNodeResult::Succeeded;
             }
             else
             {
@@ -65,16 +66,11 @@ EBTNodeResult::Type UBTTask_HasLoS::ExecuteTask(UBehaviorTreeComponent& OwnerCom
                     DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Lost LoS", selfPawn, FColor::Red, 5.f, false);
                 }
 
-                return EBTNodeResult::Failed;
-                
             }
-            
-            
+
+
         }
-
     }
-
-    return EBTNodeResult::Failed;
 }
 
 
