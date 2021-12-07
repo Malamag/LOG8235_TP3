@@ -6,6 +6,7 @@
 #include "SDTBaseAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "SDTChaseGroupManager.h"
 
 #include "SDTAIController.generated.h"
 
@@ -60,6 +61,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AI)
         bool Landing = false;
 
+    
 protected:
 
     void GetHightestPriorityDetectionHit(const TArray<FHitResult>& hits, FHitResult& outDetectionHit);
@@ -74,13 +76,16 @@ protected:
     void OnMoveToTarget();
 
     virtual void OnPossess(APawn* pawn) override;
+    virtual void BeginPlay() override;
 
 public:
     virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
     void RotateTowards(const FVector& targetLocation);
     void SetActorLocation(const FVector& targetLocation);
     void AIStateInterrupted();
-
+    void JoinChaseGroup();
+    void LeaveChaseGroup();
+    void UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute);
     void UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool atJumpSegment);
     void UpdateBehaviorTreeIsAgentLanding(APawn* pawn, bool isAgentLanding);
     void UpdateBehaviorTreeIsAgentInTheAir(APawn* pawn, bool isAgentInTheAir);
@@ -95,6 +100,7 @@ public:
     uint8 GetIsAgentLandingBBKeyID() { return m_isAgentLandingBBKeyID; }
     uint8 GetIsAgentAtJumpSegmentBBKeyID() { return m_isAgentAtJumpSegmentBBKeyID; }
     uint8 GetReachedDestinationBBKeyID() { return m_reachedDestinationBBKeyID; }
+    uint8 GetCanExecuteBBKeyID() { return m_canExecuteBBKeyID; }
 
     float timerStart = 0.0f;
     FString stateString = "";
@@ -130,4 +136,7 @@ protected:
     uint8 m_isAgentLandingBBKeyID;
     uint8 m_isAgentAtJumpSegmentBBKeyID;
     uint8 m_reachedDestinationBBKeyID;
+    uint8 m_canExecuteBBKeyID;
+
+    ASDTChaseGroupManager* m_chaseGroupManager;
 };

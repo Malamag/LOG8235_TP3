@@ -1,28 +1,42 @@
 #pragma once
 //#include "TargetLKPInfo.h"
-#include "SDTAIController.h"
+#include "SDTBaseAIController.h"
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "SDTChaseGroupManager.generated.h"
 
 /**
  *
  */
-class SOFTDESIGNTRAINING_API SDTChaseGroupManager
+UCLASS()
+class SOFTDESIGNTRAINING_API ASDTChaseGroupManager : public AActor
 {
-public:
-    static SDTChaseGroupManager* GetInstance();
-    static void Destroy();
+    GENERATED_BODY()
 
-    void RegisterAIAgent(ASDTAIController* aiAgent);
-    void UnregisterAIAgent(ASDTAIController* aiAgent);
+public:
+    ASDTChaseGroupManager();
+    void ClearChasePoints();
+    void UpdateChasePoints();
+    void RegisterAIAgent(ASDTBaseAIController* aiAgent);
+    void UnregisterAIAgent(ASDTBaseAIController* aiAgent);
+    void DrawChasePoints();
+    void DisplayGroupMember();
 
     //TargetLKPInfo GetLKPFromGroup(const FString& targetLabel, bool& targetFound);
+protected:
+    virtual void BeginPlay() override;
+
+public:
+    virtual void Tick(float DeltaTime) override;
 
 private:
 
-    //SINGLETON
-    SDTChaseGroupManager();
-    static SDTChaseGroupManager* m_Instance;
+    void AssignChasePointsToAiActors();
 
-    TArray<ASDTAIController*> m_registeredAgents;
+    float m_radius = 250;
+    ACharacter* m_target;
+    TArray<FVector> m_chasePoints;
+
+    TArray<ASDTBaseAIController*> m_registeredAgents;
 
 };

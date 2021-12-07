@@ -16,7 +16,7 @@ EBTNodeResult::Type UBTTask_LeaveChaseGroup::ExecuteTask(UBehaviorTreeComponent&
     {
         UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
         APawn* selfPawn = Cast<APawn>(blackboard->GetValue<UBlackboardKeyType_Object>(blackboard->GetKeyID("SelfActor")));
-
+        aiController->LeaveChaseGroup();
 
         return EBTNodeResult::Succeeded;
 

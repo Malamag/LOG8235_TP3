@@ -2,37 +2,96 @@
 
 #include "SDTChaseGroupManager.h"
 #include "SoftDesignTraining.h"
+#include "DrawDebugHelpers.h"
+#include <cmath>
+#include "Engine.h"
 
-SDTChaseGroupManager* SDTChaseGroupManager::m_Instance;
-
-SDTChaseGroupManager::SDTChaseGroupManager()
+ASDTChaseGroupManager::ASDTChaseGroupManager()
 {
+	PrimaryActorTick.bCanEverTick = true;
 }
 
-SDTChaseGroupManager* SDTChaseGroupManager::GetInstance()
+void ASDTChaseGroupManager::BeginPlay()
 {
-    if (!m_Instance)
-    {
-        m_Instance = new SDTChaseGroupManager();
-    }
+	Super::BeginPlay();
 
-    return m_Instance;
+	m_target = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 }
 
-void SDTChaseGroupManager::Destroy()
+void ASDTChaseGroupManager::Tick(float DeltaTime)
 {
-    delete m_Instance;
-    m_Instance = nullptr;
+	Super::Tick(DeltaTime);
+	DrawChasePoints();
+	DisplayGroupMember();
 }
 
-void SDTChaseGroupManager::RegisterAIAgent(ASDTAIController* aiAgent)
+void ASDTChaseGroupManager::ClearChasePoints()
 {
-    m_registeredAgents.Add(aiAgent);
+	m_chasePoints.Empty();
 }
 
-void SDTChaseGroupManager::UnregisterAIAgent(ASDTAIController* aiAgent)
+void ASDTChaseGroupManager::UpdateChasePoints()
 {
-    m_registeredAgents.Remove(aiAgent);
+	FVector chasePoint = m_target->GetActorLocation();
+	if (m_registeredAgents.Num() == 1) {
+		m_chasePoints.Add(FVector(0, 0, 0));
+	}
+	else {
+		for (int i = 0; i < m_registeredAgents.Num(); i++) {
+			float currentAngle = (i * 2 * PI) / m_registeredAgents.Num();
+			float x = m_radius * cos(currentAngle);
+			float y = m_radius * sin(currentAngle);
+			FVector offset = FVector(x, y, 0);
+
+			//chasePoint += offset;
+			m_chasePoints.Add(offset);
+		}
+	}
+}
+
+void ASDTChaseGroupManager::RegisterAIAgent(ASDTBaseAIController* aiAgent)
+{
+	if (!m_registeredAgents.Contains(aiAgent)) {
+		m_registeredAgents.Add(aiAgent);		
+		ClearChasePoints();
+		UpdateChasePoints();
+		AssignChasePointsToAiActors();
+	}
+}
+
+void ASDTChaseGroupManager::UnregisterAIAgent(ASDTBaseAIController* aiAgent)
+{
+	if (m_registeredAgents.Contains(aiAgent)) {
+		m_registeredAgents.Remove(aiAgent);
+		ClearChasePoints();
+		UpdateChasePoints();
+		AssignChasePointsToAiActors();
+	}
+	
+}
+
+void ASDTChaseGroupManager::AssignChasePointsToAiActors()
+{
+	for (int i = 0; i < m_registeredAgents.Num(); i++) {
+		//m_registeredAgents[i]->SetChasePoint(m_chasePoints[i]);
+	}
+}
+
+void ASDTChaseGroupManager::DrawChasePoints()
+{
+	for (int i = 0; i < m_chasePoints.Num(); i++)
+	{
+		DrawDebugSphere(GetWorld(), m_target->GetActorLocation() + m_chasePoints[i], 15.0f, 100, FColor::Red);
+	}
+}
+
+void ASDTChaseGroupManager::DisplayGroupMember()
+{
+	for (int i = 0; i < m_registeredAgents.Num(); i++)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Red, FString::FString(m_registeredAgents[i]->GetName()));
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 0, FColor::Green, FString::FString("Membre du groupe de poursuite :"));
 }
 
 /*TargetLKPInfo AiAgentGroupManager::GetLKPFromGroup(const FString& targetLabel, bool& targetfound)

@@ -23,6 +23,15 @@ ASDTAIController::ASDTAIController(const FObjectInitializer& ObjectInitializer)
     m_blackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 }
 
+void ASDTAIController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    TArray<AActor*> list;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASDTChaseGroupManager::StaticClass(), list);
+    m_chaseGroupManager = Cast<ASDTChaseGroupManager>(list[0]);
+}
+
 void ASDTAIController::Tick(float deltaTime)
 {
     Super::Tick(deltaTime);
@@ -375,6 +384,27 @@ void ASDTAIController::UpdatePlayerInteractionBehavior(const FHitResult& detecti
     }
 }
 
+void ASDTAIController::JoinChaseGroup()
+{
+    m_chaseGroupManager->RegisterAIAgent(this);
+}
+
+void ASDTAIController::LeaveChaseGroup()
+{
+    m_chaseGroupManager->UnregisterAIAgent(this);
+}
+
+void ASDTAIController::UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute) {
+
+    if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
+    {
+        if (aiBaseCharacter->GetBehaviorTree())
+        {
+            m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetCanExecuteBBKeyID(), canExecute);
+        }
+    }
+}
+
 void ASDTAIController::UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool atJumpSegment)
 {
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
@@ -396,6 +426,7 @@ void ASDTAIController::UpdateBehaviorTreeIsAgentInTheAir(APawn* pawn, bool isAge
         }
     }
 }
+
 
 void ASDTAIController::UpdateBehaviorTreeIsAgentLanding(APawn* pawn, bool isAgentLanding)
 {
@@ -451,10 +482,12 @@ void ASDTAIController::OnPossess(APawn* pawn)
             m_isAgentLandingBBKeyID = m_blackboardComponent->GetKeyID("IsAgentLanding");
             m_isAgentAtJumpSegmentBBKeyID = m_blackboardComponent->GetKeyID("IsAgentAtJumpSegment");
             m_reachedDestinationBBKeyID = m_blackboardComponent->GetKeyID("ReachedDestination");
+            m_canExecuteBBKeyID = m_blackboardComponent->GetKeyID("CanExecute");
             //Set this agent in the BT
             UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
             UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
             UpdateBehaviorTreeIsAgentLanding(pawn, false);
+            UpdateBehaviorTreeCanExecute(pawn, false);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
             m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);
