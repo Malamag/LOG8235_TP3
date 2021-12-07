@@ -32,7 +32,6 @@
 *.app
 
 /TP3/Binaries
-/TP3/Config
 /TP3/Content/Collections
 /TP3/Content/Mannequin
 /TP3/Content/StarterContent
