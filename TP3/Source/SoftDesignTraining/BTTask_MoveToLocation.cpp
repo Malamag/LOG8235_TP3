@@ -6,6 +6,7 @@
 
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Int.h"
 #include "DrawDebugHelpers.h"
 
 EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -16,6 +17,28 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
         //aiController->StopMovement();
         FVector targetLocation = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(aiController->GetTargetPositionBBKeyID());
         aiController->MoveToLocation(targetLocation, 0.5f, false, true, false, NULL, false);
+
+        int aiState = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID());
+
+        switch (aiState)
+        {
+        case ASDTAIController::PlayerInteractionBehavior_Collect:
+            aiController->timerString = "Collect\nExecTime:";
+            break;
+        case ASDTAIController::PlayerInteractionBehavior_Chase:
+            aiController->timerString = "Chase\nExecTime:";
+            break;
+        case ASDTAIController::PlayerInteractionBehavior_Flee:
+            aiController->timerString = "Flee\nExecTime:";
+            break;
+        }
+
+        int32 seconds = 0;
+        float remaining = 0.0f;
+        UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
+        float endTime = seconds + remaining;
+        aiController->timerString += FString::SanitizeFloat(endTime - aiController->timerStart);
+
         blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetReachedDestinationBBKeyID(), false);
         return EBTNodeResult::Succeeded;
     }

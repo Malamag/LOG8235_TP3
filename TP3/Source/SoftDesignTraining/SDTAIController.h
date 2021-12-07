@@ -96,7 +96,11 @@ public:
     uint8 GetIsAgentAtJumpSegmentBBKeyID() { return m_isAgentAtJumpSegmentBBKeyID; }
     uint8 GetReachedDestinationBBKeyID() { return m_reachedDestinationBBKeyID; }
 
+    float timerStart = 0.0f;
+    FString stateString = "";
+    FString timerString = "";
 
+    virtual void Tick(float deltaTime) override;
 
 private:
     virtual void GoToBestTarget(float deltaTime) override;

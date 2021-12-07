@@ -14,6 +14,11 @@ EBTNodeResult::Type UBTTask_GetClosestCollectible::ExecuteTask(UBehaviorTreeComp
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
+        int32 seconds = 0;
+        float remaining = 0.0f;
+        UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
+        aiController->timerStart = seconds + remaining;
+
         UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
         APawn* selfPawn = Cast<APawn>(blackboard->GetValue<UBlackboardKeyType_Object>(blackboard->GetKeyID("SelfActor")));
         float closestSqrCollectibleDistance = 18446744073709551610.f;

@@ -13,7 +13,6 @@ EBTNodeResult::Type UBTTask_SetNewBehaviorToCollect::ExecuteTask(UBehaviorTreeCo
 
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
-
         OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID(), ASDTAIController::PlayerInteractionBehavior_Collect);
         return EBTNodeResult::Succeeded;
     }

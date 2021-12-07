@@ -13,6 +13,10 @@ EBTNodeResult::Type UBTTask_SetNewBehaviorToChase::ExecuteTask(UBehaviorTreeComp
 
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
+        int32 seconds = 0;
+        float remaining = 0.0f;
+        UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
+        aiController->timerStart = seconds + remaining;
 
         OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID(), ASDTAIController::PlayerInteractionBehavior_Chase);
         return EBTNodeResult::Succeeded;

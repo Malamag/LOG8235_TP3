@@ -23,6 +23,13 @@ ASDTAIController::ASDTAIController(const FObjectInitializer& ObjectInitializer)
     m_blackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 }
 
+void ASDTAIController::Tick(float deltaTime)
+{
+    Super::Tick(deltaTime);
+
+    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 5.f), timerString, GetPawn(), FColor::Orange, 0.0f, false);
+}
+
 void ASDTAIController::GoToBestTarget(float deltaTime)
 {
     switch (m_PlayerInteractionBehavior)

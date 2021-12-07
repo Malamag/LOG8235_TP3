@@ -14,7 +14,6 @@ EBTNodeResult::Type UBTTask_SetNewBehaviorToFlee::ExecuteTask(UBehaviorTreeCompo
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
         APawn* selfPawn = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(OwnerComp.GetBlackboardComponent()->GetKeyID("SelfActor")));
-        DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "Fleeing", selfPawn, FColor::Red, 5.f, false);
         OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID(), ASDTAIController::PlayerInteractionBehavior_Flee);
         return EBTNodeResult::Succeeded;
     }
