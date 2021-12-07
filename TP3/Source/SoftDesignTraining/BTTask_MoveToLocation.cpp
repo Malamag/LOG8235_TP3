@@ -23,13 +23,10 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
         switch (aiState)
         {
         case ASDTAIController::PlayerInteractionBehavior_Collect:
-            aiController->timerString = "Collect\nExecTime:";
-            break;
-        case ASDTAIController::PlayerInteractionBehavior_Chase:
-            aiController->timerString = "Chase\nExecTime:";
+            aiController->fleeAndCollectTimeString = "Collect\nExecTime:";
             break;
         case ASDTAIController::PlayerInteractionBehavior_Flee:
-            aiController->timerString = "Flee\nExecTime:";
+            aiController->fleeAndCollectTimeString = "Flee\nExecTime:";
             break;
         }
 
@@ -37,7 +34,7 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
         float remaining = 0.0f;
         UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
         float endTime = seconds + remaining;
-        aiController->timerString += FString::SanitizeFloat(endTime - aiController->timerStart);
+        aiController->fleeAndCollectTimeString += FString::SanitizeFloat(endTime - aiController->fleeAndCollectTimerStart);
 
         blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetReachedDestinationBBKeyID(), false);
         return EBTNodeResult::Succeeded;

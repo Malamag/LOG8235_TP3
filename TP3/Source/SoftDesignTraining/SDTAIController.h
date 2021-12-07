@@ -102,9 +102,10 @@ public:
     uint8 GetReachedDestinationBBKeyID() { return m_reachedDestinationBBKeyID; }
     uint8 GetCanExecuteBBKeyID() { return m_canExecuteBBKeyID; }
 
-    float timerStart = 0.0f;
-    FString stateString = "";
-    FString timerString = "";
+    float fleeAndCollectTimerStart = 0.0f;
+    float detectTimerStart = 0.0f;
+    FString fleeAndCollectTimeString = "";
+    FString detectTimeString = "";
 
     virtual void Tick(float deltaTime) override;
 

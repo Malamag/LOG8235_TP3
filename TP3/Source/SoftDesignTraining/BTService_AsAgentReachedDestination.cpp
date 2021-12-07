@@ -17,6 +17,8 @@ void UBTService_AsAgentReachedDestination::TickNode(UBehaviorTreeComponent& Owne
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
+        
+
         UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
 
         if (aiController->GetMoveStatus() == EPathFollowingStatus::Idle) {

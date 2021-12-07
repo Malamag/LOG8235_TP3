@@ -18,6 +18,7 @@ void UBTService_IsPlayerPoweredUp::TickNode(UBehaviorTreeComponent& OwnerComp, u
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
+
         OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Bool>(aiController->GetIsPlayerPowerUpBBKeyID(), SDTUtils::IsPlayerPoweredUp(GetWorld()));
     }
 }

@@ -18,6 +18,11 @@ void UBTService_UpdateLoS::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 {
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
+        int32 seconds = 0;
+        float remaining = 0.0f;
+        UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
+        aiController->detectTimerStart = seconds + remaining;
+
         ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
         if (playerCharacter) {
 
@@ -67,7 +72,6 @@ void UBTService_UpdateLoS::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
                 }
 
             }
-
 
         }
     }

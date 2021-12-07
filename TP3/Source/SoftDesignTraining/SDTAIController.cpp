@@ -36,7 +36,7 @@ void ASDTAIController::Tick(float deltaTime)
 {
     Super::Tick(deltaTime);
 
-    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 5.f), timerString, GetPawn(), FColor::Green, 0.0f, false);
+    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 5.f), detectTimeString + FString("\n---\n") + fleeAndCollectTimeString, GetPawn(), FColor::Green, 0.0f, false);
 }
 
 void ASDTAIController::GoToBestTarget(float deltaTime)
