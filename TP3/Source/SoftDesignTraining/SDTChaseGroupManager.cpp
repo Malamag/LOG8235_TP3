@@ -16,88 +16,64 @@ void ASDTChaseGroupManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	m_target = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 }
 
 void ASDTChaseGroupManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawChasePoints();
-	DisplayGroupMember();
-	//UpdateChasePoints();
-	//AssignChasePointsToAiActors();
+	DisplayGroupMembers();
 }
 
-void ASDTChaseGroupManager::ClearChasePoints()
+void ASDTChaseGroupManager::SetChasePoints()
 {
-	m_chasePoints.Empty();
-}
-
-void ASDTChaseGroupManager::UpdateChasePoints()
-{
-	FVector chasePoint = m_target->GetActorLocation();
 	if (m_registeredAgents.Num() == 1) {
-		m_chasePoints.Add(chasePoint);
+		m_chasePoints.Add(player->GetActorLocation());
 		m_registeredAgents[0]->m_groupNumber = 0;
 	}
 	else {
+		int32 numAgents = m_registeredAgents.Num();
 		for (int i = 0; i < m_registeredAgents.Num(); i++) {
-			float currentAngle = (i * 2 * PI) / m_registeredAgents.Num();
-			float x = m_radius * cos(currentAngle);
-			float y = m_radius * sin(currentAngle);
-			FVector offset = FVector(x, y, 0);
-
-			//chasePoint += offset;
-			m_chasePoints.Add(offset);
+			float curAngle = (2*PI*i / numAgents); //angle sur le cercle
+			FVector chasePoint = FVector(circle_radius * cos(curAngle), circle_radius * sin(curAngle), 0);
+			m_chasePoints.Add(chasePoint);
 			m_registeredAgents[i]->m_groupNumber = i;
 		}
 	}
 }
 
-void ASDTChaseGroupManager::RegisterAIAgent(ASDTBaseAIController* aiAgent)
+void ASDTChaseGroupManager::AddAgent(ASDTBaseAIController* aiAgent)
 {
 	if (!m_registeredAgents.Contains(aiAgent)) {
 		m_registeredAgents.Add(aiAgent);		
-		ClearChasePoints();
-		UpdateChasePoints();
-		//AssignChasePointsToAiActors();
+		m_chasePoints.Empty();
+		SetChasePoints();
 	}
 }
 
-void ASDTChaseGroupManager::UnregisterAIAgent(ASDTBaseAIController* aiAgent)
+void ASDTChaseGroupManager::RemoveAgent(ASDTBaseAIController* aiAgent)
 {
 	if (m_registeredAgents.Contains(aiAgent)) {
 		m_registeredAgents.Remove(aiAgent);
-		ClearChasePoints();
-		UpdateChasePoints();
-		//AssignChasePointsToAiActors();
+		m_chasePoints.Empty();
+		SetChasePoints();
 	}
 	
 }
 
-void ASDTChaseGroupManager::AssignChasePointsToAiActors()
+void ASDTChaseGroupManager::MoveToChasePoints()
 {
 	for (int i = 0; i < m_registeredAgents.Num(); i++) {
-		//m_registeredAgents[i]->StopMovement();
-		m_registeredAgents[i]->MoveToLocation(m_target->GetActorLocation() + m_chasePoints[i], 0.5f);
-		//m_registeredAgents[i]->SetChasePoint(m_chasePoints[i]);
+		m_registeredAgents[i]->MoveToLocation(player->GetActorLocation() + m_chasePoints[i], 0.5f);
 	}
 }
 
 FVector ASDTChaseGroupManager::GetChaseLocation(int groupNumber) {
 
-	return m_target->GetActorLocation() + m_chasePoints[groupNumber];
+	return player->GetActorLocation() + m_chasePoints[groupNumber];
 }
 
-void ASDTChaseGroupManager::DrawChasePoints()
-{
-	for (int i = 0; i < m_chasePoints.Num(); i++)
-	{
-		DrawDebugSphere(GetWorld(), m_target->GetActorLocation() + m_chasePoints[i], 15.0f, 100, FColor::Red);
-	}
-}
-
-void ASDTChaseGroupManager::DisplayGroupMember()
+void ASDTChaseGroupManager::DisplayGroupMembers()
 {
 	for (int i = 0; i < m_registeredAgents.Num(); i++)
 	{

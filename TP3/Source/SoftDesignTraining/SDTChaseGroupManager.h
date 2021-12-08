@@ -15,28 +15,23 @@ class SOFTDESIGNTRAINING_API ASDTChaseGroupManager : public AActor
 
 public:
     ASDTChaseGroupManager();
-    void ClearChasePoints();
-    void UpdateChasePoints();
-    void RegisterAIAgent(ASDTBaseAIController* aiAgent);
-    void UnregisterAIAgent(ASDTBaseAIController* aiAgent);
-    void DrawChasePoints();
-    void DisplayGroupMember();
+    void SetChasePoints();
+    void AddAgent(ASDTBaseAIController* aiAgent);
+    void RemoveAgent(ASDTBaseAIController* aiAgent);
+    void MoveToChasePoints();
+    void DisplayGroupMembers();
     FVector GetChaseLocation(int groupNumber);
+
+    TArray<ASDTBaseAIController*> m_registeredAgents;
 
 protected:
     virtual void BeginPlay() override;
-
-public:
     virtual void Tick(float DeltaTime) override;
 
 private:
 
-    void AssignChasePointsToAiActors();
+    ACharacter* player;
 
-    float m_radius = 250;
-    ACharacter* m_target;
+    float circle_radius = 200;
     TArray<FVector> m_chasePoints;
-
-    TArray<ASDTBaseAIController*> m_registeredAgents;
-
 };

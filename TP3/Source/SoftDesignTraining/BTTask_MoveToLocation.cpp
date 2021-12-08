@@ -20,21 +20,23 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
 
         int aiState = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID());
 
-        switch (aiState)
-        {
-        case ASDTAIController::PlayerInteractionBehavior_Collect:
-            aiController->fleeAndCollectTimeString = "Collect\nExecTime:";
-            break;
-        case ASDTAIController::PlayerInteractionBehavior_Flee:
-            aiController->fleeAndCollectTimeString = "Flee\nExecTime:";
-            break;
-        }
-
         int32 seconds = 0;
         float remaining = 0.0f;
         UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
         float endTime = seconds + remaining;
-        aiController->fleeAndCollectTimeString += FString::SanitizeFloat(endTime - aiController->fleeAndCollectTimerStart);
+        FString time = FString::SanitizeFloat(endTime - aiController->fleeAndCollectTimerStart);
+
+        switch (aiState)
+        {
+        case ASDTAIController::PlayerInteractionBehavior_Collect:
+            aiController->fleeAndCollectTimeString = "Collect\nExecTime:" + time;
+            break;
+        case ASDTAIController::PlayerInteractionBehavior_Flee:
+            aiController->fleeAndCollectTimeString = "Flee\nExecTime:" + time;
+            break;
+        default:
+            break;
+        }
 
         blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetReachedDestinationBBKeyID(), false);
         return EBTNodeResult::Succeeded;

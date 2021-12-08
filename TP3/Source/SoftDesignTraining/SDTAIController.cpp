@@ -394,12 +394,12 @@ void ASDTAIController::UpdatePlayerInteractionBehavior(const FHitResult& detecti
 
 void ASDTAIController::JoinChaseGroup()
 {
-    m_chaseGroupManager->RegisterAIAgent(this);
+    m_chaseGroupManager->AddAgent(this);
 }
 
 void ASDTAIController::LeaveChaseGroup()
 {
-    m_chaseGroupManager->UnregisterAIAgent(this);
+    m_chaseGroupManager->RemoveAgent(this);
 }
 
 void ASDTAIController::UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute) {
