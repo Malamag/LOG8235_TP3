@@ -18,7 +18,6 @@ EBTNodeResult::Type UBTTask_JoinChaseGroup::ExecuteTask(UBehaviorTreeComponent& 
         UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
         APawn* selfPawn = Cast<APawn>(blackboard->GetValue<UBlackboardKeyType_Object>(blackboard->GetKeyID("SelfActor")));
 
-        //DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "Try Joinning Group", selfPawn, FColor::Red, 5.f, false);
         aiController->JoinChaseGroup();
 
         return EBTNodeResult::Succeeded;

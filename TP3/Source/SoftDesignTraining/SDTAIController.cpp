@@ -40,10 +40,12 @@ void ASDTAIController::Tick(float deltaTime)
     
     APawn* pawn = GetPawn();
 
+    //Reset tree
     UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, AtJumpSegment);
     UpdateBehaviorTreeIsAgentInTheAir(pawn, InAir);
     UpdateBehaviorTreeIsAgentLanding(pawn, Landing);
-        
+    
+    //Draw CPU times
     DrawDebugString(GetWorld(), FVector(0.f, 0.f, 5.f), detectTimeString + FString("\n---\n") + fleeAndCollectTimeString, GetPawn(), FColor::Green, 0.0f, false);
 }
 
@@ -392,16 +394,19 @@ void ASDTAIController::UpdatePlayerInteractionBehavior(const FHitResult& detecti
     }
 }
 
+//Tells chase group manager to add the agent to the chase group
 void ASDTAIController::JoinChaseGroup()
 {
     m_chaseGroupManager->AddAgent(this);
 }
 
+//Tells chase group manager to remove the agent to the chase group
 void ASDTAIController::LeaveChaseGroup()
 {
     m_chaseGroupManager->RemoveAgent(this);
 }
 
+// Update wether or not the tree can execute on the blackboard
 void ASDTAIController::UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute) {
 
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
@@ -413,6 +418,7 @@ void ASDTAIController::UpdateBehaviorTreeCanExecute(APawn* pawn, bool canExecute
     }
 }
 
+// Update atJumpSegment on the blackboard
 void ASDTAIController::UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool atJumpSegment)
 {
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
@@ -424,6 +430,7 @@ void ASDTAIController::UpdateBehaviorTreeIsAgentAtJumpSegment(APawn* pawn, bool 
     }
 }
 
+// Update isAgentInTheAir on the blackboard
 void ASDTAIController::UpdateBehaviorTreeIsAgentInTheAir(APawn* pawn, bool isAgentInTheAir)
 {
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
@@ -435,7 +442,7 @@ void ASDTAIController::UpdateBehaviorTreeIsAgentInTheAir(APawn* pawn, bool isAge
     }
 }
 
-
+// Update isAgentLanding on the blackboard
 void ASDTAIController::UpdateBehaviorTreeIsAgentLanding(APawn* pawn, bool isAgentLanding)
 {
     if (ASoftDesignTrainingCharacter* aiBaseCharacter = Cast<ASoftDesignTrainingCharacter>(pawn))
@@ -475,15 +482,10 @@ void ASDTAIController::ResetState() {
     SetBlackboardDefaultState(GetPawn());
 }
 
+// Reset the blackboard and animation variables to prevent getting stuck in the BT or in a jump animation
 void ASDTAIController::SetBlackboardDefaultState(APawn* pawn) {
-    //StopBehaviorTree(pawn);
-    //StartBehaviorTree(pawn);
     USDTPathFollowingComponent* pathfollowing = Cast<USDTPathFollowingComponent>(GetPathFollowingComponent());
-    //pathfollowing->AbortMove("Respawn", pathfollowing->GetCurrentRequestId());
     pathfollowing->m_JumpProgressRatio = 1.f;
-    //pathfollowing->m_JumpProgressRatio = 0.f;
-    //pawn->Reset();
-   
     
     AtJumpSegment = false;
     InAir = false;
@@ -492,7 +494,7 @@ void ASDTAIController::SetBlackboardDefaultState(APawn* pawn) {
     UpdateBehaviorTreeIsAgentAtJumpSegment(pawn, false);
     UpdateBehaviorTreeIsAgentInTheAir(pawn, false);
     UpdateBehaviorTreeIsAgentLanding(pawn, false);
-    UpdateBehaviorTreeCanExecute(pawn, true);
+    UpdateBehaviorTreeCanExecute(pawn, false);
     m_blackboardComponent->SetValue<UBlackboardKeyType_Int>(GetAgentBehaviorBBKeyID(), PlayerInteractionBehavior_Collect);
     m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetIsLoSTimerActiveBBKeyID(), false);
     m_blackboardComponent->SetValue<UBlackboardKeyType_Bool>(GetWasPlayerInLoSBBKeyID(), false);
@@ -501,6 +503,7 @@ void ASDTAIController::SetBlackboardDefaultState(APawn* pawn) {
     
 }
 
+// Get the chase location of the agent in the chase group
 FVector ASDTAIController::GetChaseLocation() {
     return m_chaseGroupManager->GetChaseLocation(m_groupNumber);
 }

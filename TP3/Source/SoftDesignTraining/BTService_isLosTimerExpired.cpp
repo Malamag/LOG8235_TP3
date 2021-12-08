@@ -34,11 +34,6 @@ void UBTService_isLosTimerExpired::TickNode(UBehaviorTreeComponent& OwnerComp, u
                 blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetWasPlayerInLoSBBKeyID(), false);
             }
         }
-        int32 seconds = 0;
-        float remaining = 0.0f;
-        UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
-        float endTime = seconds + remaining;
-        aiController->detectTimeString = FString("Detect\nExecTime:") + FString::SanitizeFloat(endTime - aiController->detectTimerStart);
     }
 
 }

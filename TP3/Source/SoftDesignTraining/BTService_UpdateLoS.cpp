@@ -54,7 +54,7 @@ void UBTService_UpdateLoS::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
                 {
                     blackboard->SetValue<UBlackboardKeyType_Bool>(aiController->GetIsLoSTimerActiveBBKeyID(), false);
 
-                    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Got LoS", selfPawn, FColor::Red, 5.f, false);
+                    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Got LoS", selfPawn, FColor::Red, 2.f, false);
                 }
             }
             else
@@ -68,13 +68,19 @@ void UBTService_UpdateLoS::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
                     float currentTime = currentSecond + currentPartialSecond;
 
                     blackboard->SetValue<UBlackboardKeyType_Float>(aiController->GetLoSTimerStartTimeBBKeyID(), currentTime);
-                    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Lost LoS", selfPawn, FColor::Red, 5.f, false);
+                    DrawDebugString(GetWorld(), FVector(0.f, 0.f, 10.f), "Lost LoS", selfPawn, FColor::Red, 2.f, false);
                 }
 
             }
+            seconds = 0;
+            remaining = 0.0f;
+            UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
+            float endTime = seconds + remaining;
+            aiController->detectTimeString = FString("Detect\nExecTime:") + FString::SanitizeFloat(endTime - aiController->detectTimerStart);
 
         }
     }
+
 }
 
 

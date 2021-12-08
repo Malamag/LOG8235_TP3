@@ -14,12 +14,12 @@ EBTNodeResult::Type UBTTask_MoveToLocation::ExecuteTask(UBehaviorTreeComponent& 
     if (ASDTAIController* aiController = Cast<ASDTAIController>(OwnerComp.GetAIOwner()))
     {
         UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-        //aiController->StopMovement();
         FVector targetLocation = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(aiController->GetTargetPositionBBKeyID());
         aiController->MoveToLocation(targetLocation, 0.5f, false, true, false, NULL, false);
 
         int aiState = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Int>(aiController->GetAgentBehaviorBBKeyID());
 
+        //This is to get the CPU time of finding a collectible or getting to the flee location
         int32 seconds = 0;
         float remaining = 0.0f;
         UGameplayStatics::GetAccurateRealTime(GetWorld(), seconds, remaining);
