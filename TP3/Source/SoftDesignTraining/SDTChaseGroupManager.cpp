@@ -25,16 +25,20 @@ void ASDTChaseGroupManager::Tick(float DeltaTime)
 	DisplayGroupMembers();
 }
 
-void ASDTChaseGroupManager::SetChasePoints()
+// Sets the chase points in such a way that they're equidistant along an arc
+void ASDTChaseGroupManager::SetGroupChasePoints()
 {
-	if (m_registeredAgents.Num() == 1) {
+	if (m_registeredAgents.Num() == 1) { //If only one agent in the group, simply go to player
 		m_chasePoints.Add(player->GetActorLocation());
 		m_registeredAgents[0]->m_groupNumber = 0;
 	}
 	else {
 		int32 numAgents = m_registeredAgents.Num();
 		for (int i = 0; i < m_registeredAgents.Num(); i++) {
-			float curAngle = (2*PI*i / numAgents); //angle sur le cercle
+			float curAngle = (2*PI*i / numAgents); //angle on the circle
+			if (i % 2 == 0) {
+				curAngle = int(180 + curAngle) % 360; //Distribute every other agent evenly along the circle
+			}
 			FVector chasePoint = FVector(circle_radius * cos(curAngle), circle_radius * sin(curAngle), 0);
 			m_chasePoints.Add(chasePoint);
 			m_registeredAgents[i]->m_groupNumber = i;
@@ -42,37 +46,34 @@ void ASDTChaseGroupManager::SetChasePoints()
 	}
 }
 
+// Add agent to the group and reset group chase points
 void ASDTChaseGroupManager::AddAgent(ASDTBaseAIController* aiAgent)
 {
 	if (!m_registeredAgents.Contains(aiAgent)) {
 		m_registeredAgents.Add(aiAgent);		
 		m_chasePoints.Empty();
-		SetChasePoints();
+		SetGroupChasePoints();
 	}
 }
 
+// Remove agent from the group and reset group chase points
 void ASDTChaseGroupManager::RemoveAgent(ASDTBaseAIController* aiAgent)
 {
 	if (m_registeredAgents.Contains(aiAgent)) {
 		m_registeredAgents.Remove(aiAgent);
 		m_chasePoints.Empty();
-		SetChasePoints();
+		SetGroupChasePoints();
 	}
 	
 }
 
-void ASDTChaseGroupManager::MoveToChasePoints()
-{
-	for (int i = 0; i < m_registeredAgents.Num(); i++) {
-		m_registeredAgents[i]->MoveToLocation(player->GetActorLocation() + m_chasePoints[i], 0.5f);
-	}
-}
-
+//Get a specific group members chase location
 FVector ASDTChaseGroupManager::GetChaseLocation(int groupNumber) {
 
 	return player->GetActorLocation() + m_chasePoints[groupNumber];
 }
 
+//Display the list of all members of the group
 void ASDTChaseGroupManager::DisplayGroupMembers()
 {
 	for (int i = 0; i < m_registeredAgents.Num(); i++)
